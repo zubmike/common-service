@@ -4,7 +4,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>ru.zubmike</groupId>
+    <groupId>com.github.zubmike</groupId>
     <artifactId>common-service</artifactId>
     <version>1.0</version>
 
@@ -29,7 +29,7 @@
 
         <!-- Core -->
         <dependency>
-            <groupId>ru.zubmike</groupId>
+            <groupId>com.github.zubmike</groupId>
             <artifactId>common-core</artifactId>
             <version>${common-core.version}</version>
         </dependency>
