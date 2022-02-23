@@ -2,11 +2,13 @@ package com.github.zubmike.service.conf;
 
 import com.github.zubmike.service.tasks.TaskType;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 public abstract class TaskProperties implements Serializable {
 
-	private static final long serialVersionUID = 1L;
+	@Serial
+	private static final long serialVersionUID = 5113984139054510041L;
 
 	private boolean enabled = false;
 

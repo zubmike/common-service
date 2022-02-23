@@ -1,8 +1,11 @@
 package com.github.zubmike.service.utils;
 
+import java.io.Serial;
+
 public class DuplicateException extends IllegalArgumentException {
 
-	private static final long serialVersionUID = 1L;
+	@Serial
+	private static final long serialVersionUID = 6376599594638209502L;
 
 	public DuplicateException() {
 	}

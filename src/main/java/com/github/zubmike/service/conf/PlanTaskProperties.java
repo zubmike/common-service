@@ -2,9 +2,12 @@ package com.github.zubmike.service.conf;
 
 import com.github.zubmike.service.tasks.TaskType;
 
+import java.io.Serial;
+
 public class PlanTaskProperties extends TaskProperties {
 
-	private static final long serialVersionUID = 1L;
+	@Serial
+	private static final long serialVersionUID = 3044625498666949932L;
 
 	private int hour;
 	private int minute;

@@ -22,9 +22,9 @@ public class TaskScheduler {
 
 	private final long maxTaskRuntimeMillis;
 
-	protected final ConcurrentHashMap<Class, ScheduledExecutorService> scheduledExecutorServiceMap = new ConcurrentHashMap<>();
-	protected final Map<Class, ScheduledFuture<?>> scheduledFutureMap = new LinkedHashMap<>();
-	protected final Map<Class, Task> taskMap = new LinkedHashMap<>();
+	protected final ConcurrentHashMap<Class<?>, ScheduledExecutorService> scheduledExecutorServiceMap = new ConcurrentHashMap<>();
+	protected final Map<Class<?>, ScheduledFuture<?>> scheduledFutureMap = new LinkedHashMap<>();
+	protected final Map<Class<?>, Task> taskMap = new LinkedHashMap<>();
 
 	public TaskScheduler(long maxTaskRuntimeMillis) {
 		this(maxTaskRuntimeMillis, DEFAULT_KILLER_INITIAL_DELAY_TIME, DEFAULT_KILLER_PERIOD_TIME, DEFAULT_KILLER_TIME_UNIT);
@@ -43,12 +43,8 @@ public class TaskScheduler {
 
 	public void register(Task task) {
 		switch (task.getProperties().getType()) {
-			case REPEAT:
-				registerRepeatTask(task);
-				break;
-			case PLAN:
-				registerPlanTask(task);
-				break;
+			case REPEAT -> registerRepeatTask(task);
+			case PLAN -> registerPlanTask(task);
 		}
 	}
 
@@ -113,7 +109,7 @@ public class TaskScheduler {
 
 	private void checkTasks() {
 		try {
-			for (Class taskClass : scheduledFutureMap.keySet()) {
+			for (Class<?> taskClass : scheduledFutureMap.keySet()) {
 				Task task = taskMap.get(taskClass);
 				if (task.isRunning()) {
 					long runTimeMillis = System.currentTimeMillis() - task.getLastStartMillis();
@@ -129,7 +125,7 @@ public class TaskScheduler {
 		}
 	}
 
-	private void killTask(Class taskClass) {
+	private void killTask(Class<?> taskClass) {
 		LOGGER.warn("kill task: {}", taskClass.getSimpleName());
 		ScheduledExecutorService scheduledExecutorService = scheduledExecutorServiceMap.get(taskClass);
 		scheduledFutureMap.get(taskClass).cancel(true);

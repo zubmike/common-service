@@ -1,12 +1,14 @@
 package com.github.zubmike.service.conf;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class DataBaseProperties implements Serializable {
 
-	private static final long serialVersionUID = 2L;
+	@Serial
+	private static final long serialVersionUID = 6309194681953738695L;
 
 	private String driverClass;
 	private String dialect;

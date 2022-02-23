@@ -21,7 +21,7 @@ public class QueryUtils {
 		return createPaginationQuery(session, criteriaQuery, page, limit, Arrays.asList(orders));
 	}
 
-	public static void setPredicates(CriteriaQuery query, Collection<Predicate> predicates) {
+	public static void setPredicates(CriteriaQuery<?> query, Collection<Predicate> predicates) {
 		if (CollectionUtils.isEmpty(predicates)) {
 			query.where(predicates.toArray(new Predicate[0]));
 		}
@@ -89,7 +89,7 @@ public class QueryUtils {
 				: collectionSize / MAX_IN_CLAUSE_VALUES - 1;
 	}
 
-	public static <T> void setParameterList(NativeQuery query, String paramName, Collection<T> items) {
+	public static <T> void setParameterList(NativeQuery<?> query, String paramName, Collection<T> items) {
 		List<T> itemList = items instanceof List ? (List<T>) items : new ArrayList<>(items);
 		int clauseCount = getInClauseCount(items.size());
 		for (int i = 0; i <= clauseCount; i++) {

@@ -1,10 +1,12 @@
 package com.github.zubmike.service.conf;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 public class FileKeyStoreProperties implements Serializable {
 
-	private static final long serialVersionUID = 1L;
+	@Serial
+	private static final long serialVersionUID = 528462703494393136L;
 
 	private String path;
 	private String type;

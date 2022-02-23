@@ -2,9 +2,12 @@ package com.github.zubmike.service.utils;
 
 import com.github.zubmike.core.utils.DataSourceException;
 
+import java.io.Serial;
+
 public class HttpDataSourceException extends DataSourceException {
 
-	private static final long serialVersionUID = 1L;
+	@Serial
+	private static final long serialVersionUID = 4372013846884934455L;
 
 	private final int code;
 
