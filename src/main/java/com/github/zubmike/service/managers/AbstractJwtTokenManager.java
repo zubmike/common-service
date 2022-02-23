@@ -8,6 +8,7 @@ import com.fasterxml.jackson.databind.ObjectReader;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.github.zubmike.core.utils.IOUtils;
 import com.github.zubmike.core.utils.InternalException;
+import com.github.zubmike.service.conf.JwtTokenProperties;
 import com.github.zubmike.service.utils.AuthException;
 import com.nimbusds.jose.*;
 import com.nimbusds.jose.crypto.MACSigner;
@@ -19,7 +20,6 @@ import java.io.Serializable;
 import java.text.ParseException;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.time.temporal.TemporalUnit;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -28,25 +28,20 @@ public abstract class AbstractJwtTokenManager<T extends Serializable> implements
 	private static final String CLAIM_SUB_KEY = "sub";
 	private static final String CLAIM_EXP_KEY = "exp";
 
-	private final long accessTokenLiveTime;
-	private final long refreshTokenLiveTime;
-	private final TemporalUnit tokenLiveUnit;
+	private final JwtTokenProperties jwtTokenProperties;
 
 	private final ObjectReader jsonReader;
 	private final ObjectWriter jsonWriter;
 
-	public AbstractJwtTokenManager(long accessTokenLiveTime, long refreshTokenLiveTime, TemporalUnit tokenLiveUnit,
-	                               Class<T> clazz) {
-		this.accessTokenLiveTime = accessTokenLiveTime;
-		this.refreshTokenLiveTime = refreshTokenLiveTime;
-		this.tokenLiveUnit = tokenLiveUnit;
+	public AbstractJwtTokenManager(JwtTokenProperties jwtTokenProperties, Class<T> clazz) {
+		this.jwtTokenProperties = jwtTokenProperties;
 		this.jsonReader = new ObjectMapper().readerFor(clazz);
 		this.jsonWriter = new ObjectMapper().writerFor(clazz);
 	}
 	@Override
 	public String createAccessToken(T userAccess) {
 		long exp = LocalDateTime.now().atZone(ZoneId.systemDefault())
-				.plus(accessTokenLiveTime, tokenLiveUnit)
+				.plus(jwtTokenProperties.getAccessTokenLiveTime(), jwtTokenProperties.getTokenLiveTimeUnit())
 				.toInstant().toEpochMilli();
 		return createToken(userAccess, exp);
 	}
@@ -54,7 +49,7 @@ public abstract class AbstractJwtTokenManager<T extends Serializable> implements
 	@Override
 	public String createRefreshToken(T userAccess) {
 		long exp = LocalDateTime.now().atZone(ZoneId.systemDefault())
-				.plus(refreshTokenLiveTime, tokenLiveUnit)
+				.plus(jwtTokenProperties.getRefreshTokenLiveTime(), jwtTokenProperties.getTokenLiveTimeUnit())
 				.toInstant().toEpochMilli();
 		return createToken(userAccess, exp);
 	}
@@ -94,15 +89,15 @@ public abstract class AbstractJwtTokenManager<T extends Serializable> implements
 			var claimsMap = getClaimsAndVerifySign(JWSObject.parse(token));
 			Long exp = getExp(claimsMap);
 			if (exp != null && exp <= System.currentTimeMillis()) {
-				throw new AuthException("Invalid token");
+				throw new AuthException("Invalid JWT token");
 			}
 			String sub = getSub(claimsMap);
 			if (sub == null) {
-				throw new AuthException("Invalid token");
+				throw new AuthException("Invalid JWT token");
 			}
 			return parseUserAccess(sub);
 		} catch (ParseException | JsonParseException | JsonMappingException e) {
-			throw new AuthException("Invalid token", e);
+			throw new AuthException("Invalid JWT token", e);
 		} catch (JOSEException | IOException e) {
 			throw new InternalException(e);
 		}
@@ -116,7 +111,7 @@ public abstract class AbstractJwtTokenManager<T extends Serializable> implements
 				return claimsMap;
 			}
 		}
-		throw new AuthException("Invalid token");
+		throw new AuthException("Invalid JWT token");
 	}
 
 	protected boolean verifyToken(JWSObject jwsObject) throws JOSEException {

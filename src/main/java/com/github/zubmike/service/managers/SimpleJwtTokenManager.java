@@ -1,8 +1,9 @@
 package com.github.zubmike.service.managers;
 
+import com.github.zubmike.service.conf.JwtTokenProperties;
+
 import javax.crypto.SecretKey;
 import java.io.Serializable;
-import java.time.temporal.TemporalUnit;
 
 public class SimpleJwtTokenManager<T extends Serializable> extends AbstractJwtTokenManager<T> {
 
@@ -12,9 +13,8 @@ public class SimpleJwtTokenManager<T extends Serializable> extends AbstractJwtTo
 
 	private final KeyStoreManager keyStoreManager;
 
-	public SimpleJwtTokenManager(KeyStoreManager keyStoreManager, long accessTokenLiveTime, long refreshTokenLiveTime,
-	                             TemporalUnit tokenLiveUnit, Class<T> clazz) {
-		super(accessTokenLiveTime, refreshTokenLiveTime, tokenLiveUnit, clazz);
+	public SimpleJwtTokenManager(KeyStoreManager keyStoreManager, JwtTokenProperties jwtTokenProperties, Class<T> clazz) {
+		super(jwtTokenProperties, clazz);
 		this.keyStoreManager = keyStoreManager;
 	}
 

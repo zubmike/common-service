@@ -8,9 +8,9 @@ public class FileKeyStoreProperties implements Serializable {
 	@Serial
 	private static final long serialVersionUID = 528462703494393136L;
 
-	private String path;
-	private String type;
-	private String password;
+	private String path = "keystore.jceks";
+	private String type = "JCEKS";
+	private String password = "";
 
 	public String getPath() {
 		return path;
