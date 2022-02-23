@@ -26,7 +26,6 @@ public class JsonUtils {
 		}
 	}
 
-
 	public static <T> T parse(InputStream inputStream, Class<T> clazz) {
 		try {
 			return MAPPER.readerFor(clazz).readValue(inputStream);

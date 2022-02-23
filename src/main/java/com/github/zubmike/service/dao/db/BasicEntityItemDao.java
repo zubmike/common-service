@@ -1,9 +1,9 @@
 package com.github.zubmike.service.dao.db;
 
-import com.github.zubmike.core.dao.EntityItemDao;
+import com.github.zubmike.service.dao.EntityItemDao;
+import com.github.zubmike.core.utils.DuplicateException;
 import com.github.zubmike.core.utils.InvalidParameterException;
 import com.github.zubmike.service.utils.DbDataSourceException;
-import com.github.zubmike.service.utils.DuplicateException;
 import org.hibernate.SessionFactory;
 import org.hibernate.exception.ConstraintViolationException;
 import org.hibernate.exception.DataException;

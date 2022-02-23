@@ -3,7 +3,7 @@ package com.github.zubmike.service.utils;
 import java.util.Optional;
 import java.util.stream.Stream;
 
-public enum ResponseFileType {
+public enum EntityContentType {
 
 	CVS("cvs", "text/csv"),
 	DOCX("docx", "application/vnd.openxmlformats-officedocument.wordprocessingml.document"),
@@ -21,7 +21,7 @@ public enum ResponseFileType {
 	private final String type;
 	private final String mediaType;
 
-	ResponseFileType(String type, String mediaType) {
+	EntityContentType(String type, String mediaType) {
 		this.type = type;
 		this.mediaType = mediaType;
 	}
@@ -34,13 +34,13 @@ public enum ResponseFileType {
 		return mediaType;
 	}
 
-	public static Optional<ResponseFileType> fromType(String type) {
+	public static Optional<EntityContentType> fromType(String type) {
 		return Stream.of(values())
 				.filter(item -> item.getType().equals(type))
 				.findFirst();
 	}
 
-	public static Optional<ResponseFileType> fromMediaType(String mediaType) {
+	public static Optional<EntityContentType> fromMediaType(String mediaType) {
 		return Stream.of(values())
 				.filter(item -> item.getMediaType().equals(mediaType))
 				.findFirst();

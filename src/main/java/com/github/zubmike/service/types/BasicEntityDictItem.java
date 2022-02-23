@@ -3,12 +3,14 @@ package com.github.zubmike.service.types;
 import com.github.zubmike.core.types.DictItem;
 
 import javax.persistence.*;
+import java.io.Serial;
 import java.util.Objects;
 
 @MappedSuperclass
 public class BasicEntityDictItem implements DictItem<Integer> {
 
-	private static final long serialVersionUID = 1L;
+	@Serial
+	private static final long serialVersionUID = -4860906729846297065L;
 
 	@Id
 	@Column(name = "id")
@@ -51,10 +53,9 @@ public class BasicEntityDictItem implements DictItem<Integer> {
 		if (this == o) {
 			return true;
 		}
-		if (!(o instanceof BasicEntityDictItem)) {
+		if (!(o instanceof BasicEntityDictItem that)) {
 			return false;
 		}
-		BasicEntityDictItem that = (BasicEntityDictItem) o;
 		return id == that.id && Objects.equals(name, that.name);
 	}
 

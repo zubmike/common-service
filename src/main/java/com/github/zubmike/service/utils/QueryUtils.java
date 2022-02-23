@@ -46,8 +46,8 @@ public class QueryUtils {
 	}
 
 	public static <T> Predicate createInPredicate(CriteriaBuilder builder, Path<T> path, Collection<T> items) {
-		List<Predicate> predicates = new ArrayList<>();
-		List<T> itemList = new ArrayList<>();
+		var predicates = new ArrayList<Predicate>();
+		var itemList = new ArrayList<T>();
 		int pages = items.size() / MAX_IN_CLAUSE_VALUES;
 		for (int i = 0; i <= pages; i++) {
 			List<T> pageItems = CollectionUtils.getPageItems(itemList, i + 1, MAX_IN_CLAUSE_VALUES);
@@ -75,7 +75,7 @@ public class QueryUtils {
 	}
 
 	public static String createNativeQueryPartInClause(String attributeName, String paramName, int collectionSize) {
-		List<String> parts = new ArrayList<>();
+		var parts = new ArrayList<String>();
 		int clauseCount = getInClauseCount(collectionSize);
 		for (int i = 0; i <= clauseCount; i++) {
 			parts.add(attributeName + " in " + "(:" +paramName + i + ")");
@@ -90,7 +90,7 @@ public class QueryUtils {
 	}
 
 	public static <T> void setParameterList(NativeQuery<?> query, String paramName, Collection<T> items) {
-		List<T> itemList = items instanceof List ? (List<T>) items : new ArrayList<>(items);
+		var itemList = items instanceof List ? (List<T>) items : new ArrayList<>(items);
 		int clauseCount = getInClauseCount(items.size());
 		for (int i = 0; i <= clauseCount; i++) {
 			query.setParameterList(paramName + i, CollectionUtils.getPageItems(itemList, i + 1, MAX_IN_CLAUSE_VALUES));

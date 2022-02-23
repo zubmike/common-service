@@ -1,6 +1,6 @@
 package com.github.zubmike.service.dao.db;
 
-import com.github.zubmike.core.dao.ItemDao;
+import com.github.zubmike.service.dao.ItemDao;
 import com.github.zubmike.core.utils.CollectionUtils;
 import com.github.zubmike.service.utils.QueryUtils;
 import org.hibernate.SessionFactory;
@@ -58,7 +58,7 @@ public class BasicItemDao<I extends Serializable, T> extends BasicDao implements
 		return root;
 	}
 
-	protected static void setPredicates(AbstractQuery query, Collection<Predicate> predicates) {
+	protected static void setPredicates(AbstractQuery<?> query, Collection<Predicate> predicates) {
 		if (CollectionUtils.isNotEmpty(predicates)) {
 			query.where(predicates.toArray(new Predicate[0]));
 		}

@@ -24,7 +24,7 @@ public class BasicDao {
 	protected <R> R runAndReturn(Function<Session, R> action, Function<Exception, RuntimeException> handle) {
 		Transaction transaction = null;
 		try {
-			Session session = getSession();
+			var session = getSession();
 			transaction = getTransaction();
 			beginTransaction(transaction);
 			R result = action.apply(session);
@@ -43,7 +43,7 @@ public class BasicDao {
 	protected void run(Consumer<Session> action, Function<Exception, RuntimeException> handle) {
 		Transaction transaction = null;
 		try {
-			Session session = getSession();
+			var session = getSession();
 			transaction = getTransaction();
 			beginTransaction(transaction);
 			action.accept(session);
@@ -60,7 +60,7 @@ public class BasicDao {
 
 	@Null
 	protected Transaction getTransaction() {
-		Transaction transaction = getSession().getTransaction();
+		var transaction = getSession().getTransaction();
 		var active = transaction.isActive();
 		return active ? null : transaction;
 	}

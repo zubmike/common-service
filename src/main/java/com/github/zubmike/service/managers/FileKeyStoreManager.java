@@ -62,7 +62,7 @@ public class FileKeyStoreManager implements KeyStoreManager {
 	}
 
 	private void save() throws KeyStoreException, IOException, NoSuchAlgorithmException, CertificateException {
-		try (FileOutputStream fileOutputStream = new FileOutputStream(file)) {
+		try (var fileOutputStream = new FileOutputStream(file)) {
 			keyStore.store(fileOutputStream, password);
 		}
 	}
@@ -93,9 +93,9 @@ public class FileKeyStoreManager implements KeyStoreManager {
 	public SecretKey getOrCreateKey(String alias, String algorithm, int size) {
 		return getKey(alias).orElseGet(() -> {
 			try {
-				KeyGenerator generator = KeyGenerator.getInstance(algorithm);
-				generator.init(size);
-				SecretKey secretKey = generator.generateKey();
+				var keyGenerator = KeyGenerator.getInstance(algorithm);
+				keyGenerator.init(size);
+				var secretKey = keyGenerator.generateKey();
 				setKey(alias, secretKey);
 				return secretKey;
 			} catch (Exception e) {

@@ -5,11 +5,11 @@ import com.github.zubmike.core.utils.InternalException;
 import com.github.zubmike.core.utils.InvalidParameterException;
 import com.github.zubmike.core.utils.NotFoundException;
 import com.github.zubmike.service.utils.HttpDataSourceException;
-import org.apache.http.HttpEntity;
 import org.apache.http.HttpHeaders;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.fluent.Request;
-import org.apache.http.client.fluent.Response;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.validation.constraints.Null;
 import java.io.IOException;
@@ -20,6 +20,8 @@ import java.util.Optional;
 import java.util.function.Function;
 
 public abstract class AbstractHttpDao {
+
+	private static final Logger LOGGER = LoggerFactory.getLogger(AbstractHttpDao.class);
 
 	private final String userAgent;
 	private final int maxConnectionTimeoutMillis;
@@ -60,8 +62,9 @@ public abstract class AbstractHttpDao {
 	protected <R> R doRequest(Request request, @Null byte[] body, Function<InputStream, R> prepareResult) {
 		initRequest(request);
 		try {
+			LOGGER.trace(" -> {}", request);
 			setBody(request, body);
-			Response response = request.execute();
+			var response = request.execute();
 			return response.handleResponse(httpResponse ->
 					processResponse(httpResponse, prepareResult));
 		} catch (IOException e) {
@@ -92,14 +95,14 @@ public abstract class AbstractHttpDao {
 			case HttpURLConnection.HTTP_GATEWAY_TIMEOUT:
 				throw new HttpDataSourceException(responseCode, "Source unavailable");
 			default:
-				throw new HttpDataSourceException(responseCode, "Unknown error");
+				throw new HttpDataSourceException(responseCode, "Unknown error: " + responseCode);
 		}
 	}
 
 	protected String getErrorMessage(HttpResponse response, int responseCode) throws IOException {
-		HttpEntity entity = response.getEntity();
-		return entity != null && entity.getContent() != null
-				? IOUtils.toString(entity.getContent())
+		var httpEntity = response.getEntity();
+		return httpEntity != null && httpEntity.getContent() != null
+				? IOUtils.toString(httpEntity.getContent())
 				: ("Unknown " + responseCode);
 	}
 

@@ -1,6 +1,6 @@
 package com.github.zubmike.service.dao.db;
 
-import com.github.zubmike.core.dao.DictItemDao;
+import com.github.zubmike.service.dao.DictItemDao;
 import com.github.zubmike.core.types.DictItem;
 import org.hibernate.SessionFactory;
 
