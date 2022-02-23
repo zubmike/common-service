@@ -12,7 +12,6 @@ import com.github.zubmike.service.utils.AuthException;
 import com.nimbusds.jose.*;
 import com.nimbusds.jose.crypto.MACSigner;
 import com.nimbusds.jose.crypto.MACVerifier;
-import net.minidev.json.JSONObject;
 
 import javax.crypto.SecretKey;
 import java.io.IOException;
@@ -21,8 +20,13 @@ import java.text.ParseException;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.temporal.TemporalUnit;
+import java.util.HashMap;
+import java.util.Map;
 
 public abstract class AbstractJwtTokenManager<T extends Serializable> implements TokenManager<T> {
+
+	private static final String CLAIM_SUB_KEY = "sub";
+	private static final String CLAIM_EXP_KEY = "exp";
 
 	private final long accessTokenLiveTime;
 	private final long refreshTokenLiveTime;
@@ -32,7 +36,7 @@ public abstract class AbstractJwtTokenManager<T extends Serializable> implements
 	private final ObjectWriter jsonWriter;
 
 	public AbstractJwtTokenManager(long accessTokenLiveTime, long refreshTokenLiveTime, TemporalUnit tokenLiveUnit,
-	                                  Class<T> clazz) {
+	                               Class<T> clazz) {
 		this.accessTokenLiveTime = accessTokenLiveTime;
 		this.refreshTokenLiveTime = refreshTokenLiveTime;
 		this.tokenLiveUnit = tokenLiveUnit;
@@ -73,26 +77,26 @@ public abstract class AbstractJwtTokenManager<T extends Serializable> implements
 
 	protected abstract SecretKey getSignKey();
 
-	protected JSONObject createClaims(T userAccess, Long exp) throws JsonProcessingException {
-		JSONObject claims = new JSONObject();
+	protected Map<String, Object> createClaims(T userAccess, Long exp) throws JsonProcessingException {
+		var claimsMap = new HashMap<String, Object>();
 		if (exp != null) {
-			claims.put("exp", exp);
+			claimsMap.put(CLAIM_EXP_KEY, exp);
 		}
 		byte[] bytes = jsonWriter.writeValueAsBytes(userAccess);
 		String sub = IOUtils.encodeBase64(bytes);
-		claims.put("sub", sub);
-		return claims;
+		claimsMap.put(CLAIM_SUB_KEY, sub);
+		return claimsMap;
 	}
 
 	@Override
 	public T getAccess(String token) {
 		try {
-			JSONObject jsonObject = getClaimsAndVerifySign(JWSObject.parse(token));
-			Long exp = getExp(jsonObject);
+			var claimsMap = getClaimsAndVerifySign(JWSObject.parse(token));
+			Long exp = getExp(claimsMap);
 			if (exp != null && exp <= System.currentTimeMillis()) {
 				throw new AuthException("Invalid token");
 			}
-			String sub = getSub(jsonObject);
+			String sub = getSub(claimsMap);
 			if (sub == null) {
 				throw new AuthException("Invalid token");
 			}
@@ -104,12 +108,12 @@ public abstract class AbstractJwtTokenManager<T extends Serializable> implements
 		}
 	}
 
-	protected JSONObject getClaimsAndVerifySign(JWSObject jwsObject) throws JOSEException {
+	protected Map<String, Object> getClaimsAndVerifySign(JWSObject jwsObject) throws JOSEException {
 		boolean verify = verifyToken(jwsObject);
 		if (verify && jwsObject.getPayload() != null) {
-			JSONObject jsonObject = jwsObject.getPayload().toJSONObject();
-			if (jsonObject != null) {
-				return jsonObject;
+			var claimsMap = jwsObject.getPayload().toJSONObject();
+			if (claimsMap != null) {
+				return claimsMap;
 			}
 		}
 		throw new AuthException("Invalid token");
@@ -119,16 +123,17 @@ public abstract class AbstractJwtTokenManager<T extends Serializable> implements
 		return jwsObject.verify(new MACVerifier(getSignKey()));
 	}
 
-	protected static String getSub(JSONObject jsonObject) {
-		return (String) jsonObject.get("sub");
+	protected static String getSub(Map<String, Object> claimsMap) {
+		return (String) claimsMap.get(CLAIM_SUB_KEY);
 	}
 
-	protected static Long getExp(JSONObject jsonObject) {
-		return (Long) jsonObject.get("exp");
+	protected static Long getExp(Map<String, Object> claimsMap) {
+		return (Long) claimsMap.get(CLAIM_EXP_KEY);
 	}
 
 	private T parseUserAccess(String sub) throws IOException {
 		byte[] subBytes = IOUtils.decodeBase64(sub);
 		return jsonReader.readValue(subBytes);
 	}
+
 }
