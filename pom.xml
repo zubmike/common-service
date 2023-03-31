@@ -19,7 +19,7 @@
         <logback-classic.version>1.2.10</logback-classic.version>
         <hibernate.version>5.6.5.Final</hibernate.version>
         <httpclient.version>4.5.13</httpclient.version>
-        <jackson.version>2.13.1</jackson.version>
+        <jackson.version>2.13.4.2</jackson.version>
         <nimbus-jose-jwt.version>9.19</nimbus-jose-jwt.version>
         <junit.version>4.13.2</junit.version>
         <h2.version>1.4.199</h2.version>
